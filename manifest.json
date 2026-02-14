@@ -3,8 +3,8 @@
     "short_name": "CP Sync",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0a0a0f",
-    "theme_color": "#0a0a0f",
+    "background_color": "#faf6f1",
+    "theme_color": "#faf6f1",
     "description": "Upload files to your Crosspoint Reader over WiFi",
     "icons": [
         {
