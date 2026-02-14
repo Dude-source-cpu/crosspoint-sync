@@ -39,7 +39,7 @@
         const deviceParam = params.get('device');
         if (deviceParam) {
             deviceIpInput.value = deviceParam;
-            attemptConnect(deviceParam);
+            attemptConnect(deviceParam, true); // true = from NFC/QR
         }
 
         // Load saved device IP
@@ -66,8 +66,11 @@
     }
 
     // ── Connection ─────────────────────────────────────────────────────────────
-    async function attemptConnect(ip) {
+    let fromNfc = false;
+
+    async function attemptConnect(ip, isNfcTap) {
         if (!ip) return;
+        fromNfc = !!isNfcTap;
 
         // Normalize the IP
         if (!ip.startsWith('http://') && !ip.startsWith('https://')) {
@@ -91,7 +94,11 @@
             if (resp.ok) {
                 const data = await resp.json();
                 if (data.ready) {
-                    onConnected(ip);
+                    if (fromNfc) {
+                        onConnectedFromNfc(ip);
+                    } else {
+                        onConnected(ip);
+                    }
                     return;
                 }
             }
@@ -114,6 +121,53 @@
         if (queue.length > 0) {
             queueCard.style.display = 'block';
         }
+    }
+
+    // ── NFC Tap Animation ──────────────────────────────────────────────────────
+    let nfcAnimShown = false;
+
+    function showNfcAnimation() {
+        if (nfcAnimShown) return;
+        nfcAnimShown = true;
+
+        const overlay = document.createElement('div');
+        overlay.className = 'nfc-overlay';
+        overlay.innerHTML = `
+            <div class="nfc-rings">
+                <div class="nfc-ring"></div>
+                <div class="nfc-ring"></div>
+                <div class="nfc-ring"></div>
+                <div class="nfc-ring"></div>
+                <div class="nfc-icon">📡</div>
+                <div class="nfc-check">✓</div>
+                <div class="nfc-particle"></div>
+                <div class="nfc-particle"></div>
+                <div class="nfc-particle"></div>
+                <div class="nfc-particle"></div>
+                <div class="nfc-particle"></div>
+                <div class="nfc-particle"></div>
+            </div>
+            <div class="nfc-text">Device Linked</div>
+            <div class="nfc-subtext">Ready to sync files</div>
+        `;
+        document.body.appendChild(overlay);
+
+        // Haptic feedback if available
+        if (navigator.vibrate) {
+            navigator.vibrate([50, 30, 50]);
+        }
+
+        // Fade out after animation completes
+        setTimeout(() => {
+            overlay.classList.add('fade-out');
+            setTimeout(() => overlay.remove(), 500);
+        }, 2500);
+    }
+
+    function onConnectedFromNfc(ip) {
+        showNfcAnimation();
+        // Delay so animation plays before UI changes
+        setTimeout(() => onConnected(ip), 800);
     }
 
     function onConnectionFailed(reason) {
