@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crosspoint Sync</title>
+  <meta name="description" content="Upload files to your Crosspoint Reader device over WiFi">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E📖%3C/text%3E%3C/svg%3E">
+  <meta name="theme-color" content="#0a0a0f">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <!-- Connection Bar -->
+    <header class="header">
+      <div class="header-left">
+        <div class="logo">⚡</div>
+        <h1>Crosspoint Sync</h1>
+      </div>
+      <div class="status-indicator" id="statusIndicator">
+        <span class="status-dot"></span>
+        <span class="status-text">Disconnected</span>
+      </div>
+    </header>
+
+    <!-- Device Connection -->
+    <section class="card connection-card" id="connectionCard">
+      <h2>Connect to Device</h2>
+      <p class="hint">Enter your device IP or scan the QR code on the device</p>
+      <div class="input-group">
+        <input type="text" id="deviceIp" placeholder="192.168.1.xxx:8080" autocomplete="off">
+        <button class="btn btn-primary" id="connectBtn">Connect</button>
+      </div>
+    </section>
+
+    <!-- Upload Zone -->
+    <section class="card upload-card" id="uploadCard" style="display:none">
+      <div class="drop-zone" id="dropZone">
+        <div class="drop-icon">📁</div>
+        <p>Drag files here or tap to browse</p>
+        <input type="file" id="fileInput" multiple hidden>
+      </div>
+    </section>
+
+    <!-- Queue -->
+    <section class="card queue-card" id="queueCard" style="display:none">
+      <div class="queue-header">
+        <h2>Upload Queue <span class="badge" id="queueCount">0</span></h2>
+        <div class="queue-actions">
+          <button class="btn btn-small btn-danger" id="clearQueueBtn">Clear</button>
+          <button class="btn btn-small btn-primary" id="syncBtn">Sync Now ⚡</button>
+        </div>
+      </div>
+      <div class="queue-list" id="queueList"></div>
+    </section>
+
+    <!-- Transfer Progress -->
+    <section class="card progress-card" id="progressCard" style="display:none">
+      <h2>Syncing...</h2>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <p class="progress-text" id="progressText">0 / 0 files</p>
+      <p class="progress-file" id="progressFile"></p>
+    </section>
+
+    <!-- History -->
+    <section class="card history-card" id="historyCard" style="display:none">
+      <h2>Sync Complete ✓</h2>
+      <div class="history-list" id="historyList"></div>
+      <button class="btn btn-small" id="newSyncBtn">New Sync</button>
+    </section>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
